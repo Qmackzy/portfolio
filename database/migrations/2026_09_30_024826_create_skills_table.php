@@ -6,23 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
+        // Paksa hapus tabel lama jika sudah ada agar tidak bentrok
+        Schema::dropIfExists('skills');
+
         Schema::create('skills', function (Blueprint $table) {
             $table->id();
-            $table->string('name');         // Contoh: PHP, Laravel
-            $table->string('icon');         // Contoh: </>, L, DB, IT
-            $table->text('description');   // Deskripsi singkat keahlian
+            $table->string('name');
+            $table->string('category'); // Backend, Frontend, Database, Tools
+            $table->integer('percentage')->default(80);
+            $table->string('icon')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('skills');

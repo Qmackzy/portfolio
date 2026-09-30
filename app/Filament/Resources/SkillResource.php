@@ -16,22 +16,40 @@ class SkillResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-code-bracket';
 
+    protected static ?string $navigationGroup = 'Portfolio Management';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Nama Skill')
                     ->required()
-                    ->maxLength(255),
+                    ->placeholder('Contoh: Laravel, MySQL'),
+
+                Forms\Components\Select::make('category')
+                    ->options([
+                        'Backend' => 'Backend',
+                        'Frontend' => 'Frontend',
+                        'Database' => 'Database',
+                        'Tools & DevOps' => 'Tools & DevOps',
+                    ])
+                    ->required(),
+
+                Forms\Components\TextInput::make('percentage')
+                    ->numeric()
+                    ->default(80)
+                    ->minValue(1)
+                    ->maxValue(100)
+                    ->suffix('%')
+                    ->required(),
+
                 Forms\Components\TextInput::make('icon')
-                    ->label('Icon / Simbol (Contoh: </>, L, DB)')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->label('Deskripsi')
-                    ->required()
-                    ->columnSpanFull(),
+                    ->placeholder('Contoh: devicon-laravel-plain / URL Ikon')
+                    ->helperText('Nama class ikon atau URL gambar logo skill'),
+
+                Forms\Components\Toggle::make('is_active')
+                    ->label('Tampilkan di Website')
+                    ->default(true),
             ]);
     }
 
@@ -39,15 +57,19 @@ class SkillResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Nama Skill')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('icon')
-                    ->label('Icon'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Dibuat Pada')
-                    ->dateTime('d M Y')
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('category')->sortable()->badge(),
+                Tables\Columns\TextColumn::make('percentage')->suffix('%')->sortable(),
+                Tables\Columns\IconColumn::make('is_active')->boolean()->label('Status'),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('category')
+                    ->options([
+                        'Backend' => 'Backend',
+                        'Frontend' => 'Frontend',
+                        'Database' => 'Database',
+                        'Tools & DevOps' => 'Tools & DevOps',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
