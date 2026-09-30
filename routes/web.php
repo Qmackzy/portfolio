@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
 use App\Http\Controllers\ContactController;
 use App\Models\Skill;
 use App\Models\Project;
@@ -13,15 +15,19 @@ Route::get('/', function () {
 
 // Route khusus untuk pengiriman form kontak
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+Route::get('/fix-skills-table', function () {
+    // Jalankan rekonstruksi tabel skills
+    Schema::dropIfExists('skills');
 
-Route::get('/setup-admin', function () {
-    $user = User::updateOrCreate(
-        ['email' => 'safrilisnaini45@gmail.com'],
-        [
-            'name' => 'Nyong Phil',
-            'password' => Hash::make('password123'),
-        ]
-    );
+    Schema::create('skills', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->string('category');
+        $table->integer('percentage')->default(80);
+        $table->string('icon')->nullable();
+        $table->boolean('is_active')->default(true);
+        $table->timestamps();
+    });
 
-    return 'User Admin Berhasil Dibuat! Silakan login di /admin';
+    return 'Tabel skills berhasil diperbarui di Aiven!';
 });
