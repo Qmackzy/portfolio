@@ -31,3 +31,17 @@ Route::get('/fix-skills-table', function () {
 
     return 'Tabel skills berhasil diperbarui di Aiven!';
 });
+
+Route::get('/debug-log', function () {
+    $logPath = storage_path('logs/laravel.log');
+
+    if (!file_exists($logPath)) {
+        return 'File log belum ada atau belum ada error baru yang ter-record.';
+    }
+
+    // Ambil 50 baris terakhir dari file log
+    $lines = file($logPath);
+    $lastLines = array_slice($lines, -50);
+
+    return '<pre>' . htmlspecialchars(implode('', $lastLines)) . '</pre>';
+});
