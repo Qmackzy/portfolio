@@ -13,3 +13,15 @@ Route::get('/', function () {
 
 // Route khusus untuk pengiriman form kontak
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+
+Route::get('/setup-admin', function () {
+    $user = User::updateOrCreate(
+        ['email' => 'safrilisnaini45@gmail.com'],
+        [
+            'name' => 'Nyong Phil',
+            'password' => Hash::make('password123'),
+        ]
+    );
+
+    return 'User Admin Berhasil Dibuat! Silakan login di /admin';
+});
